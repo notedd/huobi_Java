@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class BuyStrategyService {
 
@@ -49,11 +50,23 @@ public class BuyStrategyService {
         }
 
         // 获取指定账号可用金额
-//        AccountBalance accountBalance = accountService.getAccountBalance(AccountBalanceRequest.builder()
-//                .accountId(Configs.spotAccountId)
-//                .build());
-//
-//        log.info("账号信息:{}", JSON.toJSONString(accountBalance));
+        AccountBalance accountBalance = accountService.getAccountBalance(AccountBalanceRequest.builder()
+                .accountId(Configs.spotAccountId)
+                .build());
+
+        AtomicReference<BigDecimal> balanceAmout = new AtomicReference<>();
+        accountBalance.getList().forEach(balance -> {
+            if (balance.getCurrency().equals(Configs.usdt) && balance.getType().equals("trade")) {
+                balanceAmout.set(balance.getBalance());
+                return;
+            }
+        });
+
+        log.info("账号余额:{}", balanceAmout);
+        if (balanceAmout.get().compareTo(Configs.minHoldPrice) < 0) {
+            log.info("minHoldPrice return");
+            return;
+        }
 
         // 获取指定交易对行情数据
         List<Candlestick> list = marketClient.getCandlestick(CandlestickRequest.builder()
@@ -79,19 +92,20 @@ public class BuyStrategyService {
         BigDecimal askPrice = marketDetailMerged.getAsk().getPrice();
 
         //买入数量 向下取整
-        BigDecimal amount = Configs.maxPrice.divide(askPrice, 0, RoundingMode.DOWN);
+        BigDecimal amount = Configs.perMaxPrice.divide(askPrice, 0, RoundingMode.DOWN);
         CreateOrderRequest sellLimitRequest = CreateOrderRequest.spotSellLimit(Configs.spotAccountId, Configs.symbol, askPrice, amount);
         log.info("下单数据:{}", JSON.toJSONString(sellLimitRequest));
 
-        // 风控判断是否下单TODO
 
         // 下单买入 回测阶段不实际下单 记录下单数据到日志 后面分析
         if (Configs.isBuyStragegyTest) {
             log.info("isBuyStragegyTest true");
             return;
         } else {
-//            Long sellLimitId = tradeService.createOrder(sellLimitRequest);
-//            log.info("下单成功id = {}", sellLimitId);
+            Long sellLimitId = tradeService.createOrder(sellLimitRequest);
+            log.info("下单成功id = {}", sellLimitId);
         }
+
+
     }
 }

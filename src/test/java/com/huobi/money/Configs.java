@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 public class Configs {
 
     public static String symbol = "htusdt";
+    public static String usdt = "usdt";
     public static Long spotAccountId = 15703083L;
     public static Long period = 30000L;
     public static Long initdelay = 1000L;
@@ -21,8 +22,22 @@ public class Configs {
     public static volatile boolean isCanelStragegyTest = true;
     public static volatile boolean isRiskStragegyTest = true;
 
-    //每次购买最大的价格 ustd 100美金
-    public static BigDecimal maxPrice = new BigDecimal("100");
+    //风控是否关闭下单
+    public static volatile boolean isBuyStragegyRisk = true;
 
+    //每次购买最大的价格 usdt 100美金
+    public static BigDecimal perMaxPrice = new BigDecimal("100");
+
+    //账户余额最低保留金额 usdt 1000美金
+    public static BigDecimal minHoldPrice = new BigDecimal("1000");
+
+    //每次卖出止赢比例 2%
+    public static BigDecimal zhiYingScale = new BigDecimal("0.02");
+
+    //交易手续费比例 0.2%
+    public static BigDecimal perFeeScale = new BigDecimal("0.002");
+
+    //test
+    public static BigDecimal test = new BigDecimal("0.01");
 
 }
