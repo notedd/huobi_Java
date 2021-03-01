@@ -29,15 +29,17 @@ public class Configs {
     public static BigDecimal perMaxPrice = new BigDecimal("100");
 
     //账户余额最低保留金额 usdt 1000美金
-    public static BigDecimal minHoldPrice = new BigDecimal("1000");
-
-    //每次卖出止赢比例 2%
-    public static BigDecimal zhiYingScale = new BigDecimal("0.02");
+    public static BigDecimal minHoldPrice = new BigDecimal("1400");
 
     //交易手续费比例 0.2%
     public static BigDecimal perFeeScale = new BigDecimal("0.002");
 
-    //test
-    public static BigDecimal test = new BigDecimal("0.01");
+    //每次卖出止赢比例 2%
+    public static BigDecimal zhiYingScale = new BigDecimal("0.02");
+
+    //每次卖出止损比例 5%
+    public static BigDecimal zhiSunScale = new BigDecimal("0.05");
+
+
 
 }
